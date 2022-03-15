@@ -60,10 +60,15 @@ function buildCharts(sample) {
     console.log(data);
     // 3. Create a variable that holds the samples array. 
     var arr = data.samples; 
+    var samp_meta = data.metadata;
     console.log(arr);
+    console.log(samp_meta);
     // 4. Create a variable that filters the samples for the object with the desired sample number.
     var fil_samp = arr.filter(sampleObj => sampleObj.id == sample);
+    var fil_meta = samp_meta.filter(sampleMeta => sampleMeta.id == sample)
+    
     console.log(fil_samp);
+    console.log(fil_meta);
 
     //  5. Create a variable that holds the first sample in the array.
     var firstSample = fil_samp;
@@ -74,6 +79,7 @@ function buildCharts(sample) {
     var otu_id_tag ;
     var otu_labels_tag ;
     var sample_values_tag ;
+    var wfreq_tag ;
     
     // console.log(otu_id_tag);
     // console.log(otu_labels_tag);
@@ -86,10 +92,12 @@ function buildCharts(sample) {
     otu_id_tag = firstSample.map(row => row.otu_ids);
     otu_labels_tag = firstSample.map(row => row.otu_labels);
     sample_values_tag = firstSample.map(row => row.sample_values);
+    wfreq_tag = fil_meta.map(row => row.wfreq);
 
     // console.log(otu_id_tag[0]);
     // console.log(otu_labels_tag[0]);
     // console.log(sample_values_tag[0]);
+    // console.log(wfreq_tag[0]);
 
     var otu_id_tag_ten = otu_id_tag[0].slice(0, 10).reverse();
     var otu_labels_tag_ten = otu_labels_tag[0].slice(0, 10).reverse();
@@ -141,12 +149,11 @@ function buildCharts(sample) {
       marker: {
         // color: ['rgb(93, 164, 214)', 
         //  'rgb(44, 160, 101)', 'rgb(255, 65, 54)'],
+        // https://matplotlib.org/3.1.0/gallery/color/named_colors.html 
 
         size: sizeOfBubble(sample_values_tag[0]),
 
-      },
-      // hovertemplate : `(${otu_id_tag[0]}, ${sample_values_tag[0]})
-      //   <br>${otu_labels_tag[0]} `
+      }
     
     }];
 
@@ -160,6 +167,39 @@ function buildCharts(sample) {
 
     // 3. Use Plotly to plot the data with the layout.
     Plotly.newPlot("bubble", bubbleData, bubbleLayout ); 
+
+    var convert_wfreq_tag = parseFloat(wfreq_tag[0]);
+    console.log(convert_wfreq_tag);
+
+    var gaugeData = [{
+      domain: { x: [0, 1], y: [0, 1] },
+      value: convert_wfreq_tag,
+      title: { text: "Belly Button Washing Frequency <br> Scrubs per Week" },
+      type: "indicator",
+      mode: "gauge+number",
+      gauge: {
+        axis: { range: [null, 10] },
+        bar: { color: "black" },
+        steps: [
+          { range: [0, 2], color: "red" },
+          { range: [2, 4], color: "orange" },
+          { range: [4, 6], color: "yellow" },
+          { range: [6, 8], color: "lime" },
+          { range: [8, 10], color: "green" }
+        ],
+
+      }
+    }];
+    
+    // 5. Create the layout for the gauge chart.
+    var gaugeLayout = { 
+      width: 450, 
+      height: 450,
+      margin: { t: 0, b: 0 } 
+    };
+
+    // 6. Use Plotly to plot the gauge data and layout.
+    Plotly.newPlot("gauge", gaugeData, gaugeLayout);
 
   });
 }
