@@ -103,13 +103,14 @@ function buildCharts(sample) {
     var otu_labels_tag_ten = otu_labels_tag[0].slice(0, 10).reverse();
     var sample_values_tag_ten = sample_values_tag[0].slice(0, 10).reverse();
 
-    // console.log(otu_id_tag);
+    console.log((otu_id_tag_ten));
     // console.log(otu_labels_tag);
     // console.log(sample_values_tag);
 
     var yticks = {
-      // y: `"OTU" ${otu_id_tag_ten}`, 
-      y: `${otu_id_tag_ten}`, 
+      // y: `"OTU " ${otu_id_tag_ten}`, 
+      //y: `${parseFloat(otu_id_tag_ten)}`, 
+      y: `"OTU" ${otu_id_tag_ten.toString()}`,
       x: sample_values_tag_ten ,
       text:otu_labels_tag_ten,
       type: "bar",
@@ -138,6 +139,36 @@ function buildCharts(sample) {
       return sizeArray;
       
     }
+
+    function selectingColor(n){
+      console.log(n);
+      var colorArray = [];
+      for (var i = 0; i < n.length; i++) {
+        // var sizeNumber = n[i] * .75;
+        // sizeArray.push(sizeNumber);
+        if(n[i] > 2500 ){
+          colorArray.push('rgb(162,138,116)')
+        }
+        else if(n[i] > 1500){
+          colorArray.push('rgb(107,83,63)')
+        }
+        else if(n[i] > 1000){
+          colorArray.push('rgb(178,255,102)')
+        }
+        else if(n[i] > 500){
+          colorArray.push('rgb(204,255,204)')
+        }
+        else if(n[i] > 250){
+          colorArray.push('rgb(0,153,153)')
+        }
+        else{
+          colorArray.push('rgb(0,0,153)')
+        }
+
+      }
+      console.log(colorArray);
+      return colorArray;
+    }
     
     // 1. Create the trace for the bubble chart.
     var bubbleData = [{
@@ -147,10 +178,7 @@ function buildCharts(sample) {
       text: otu_labels_tag[0],
       mode: 'markers',
       marker: {
-        // color: ['rgb(93, 164, 214)', 
-        //  'rgb(44, 160, 101)', 'rgb(255, 65, 54)'],
-        // https://matplotlib.org/3.1.0/gallery/color/named_colors.html 
-
+        color: selectingColor(otu_id_tag[0]),
         size: sizeOfBubble(sample_values_tag[0]),
 
       }
